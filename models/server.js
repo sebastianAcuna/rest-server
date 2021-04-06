@@ -10,7 +10,9 @@ class Server {
         this.rutas = {
             auth: '/api/auth',
             usuarios:'/api/usuarios',
-            categorias:'/api/categorias'
+            categorias:'/api/categorias',
+            productos:'/api/productos',
+            buscar:'/api/buscar',
         }
 
 
@@ -49,6 +51,8 @@ class Server {
         this.app.use(this.rutas.auth, require('../routes/auth'))
         this.app.use(this.rutas.usuarios, require('../routes/usuarios'))
         this.app.use(this.rutas.categorias, require('../routes/categorias'))
+        this.app.use(this.rutas.productos, require('../routes/productos'))
+        this.app.use(this.rutas.buscar, require('../routes/buscar'))
         // this.app.use('/webserver', require('../../webserver').app)
     }
 
