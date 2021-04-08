@@ -30,12 +30,36 @@ const validarJWT = async (req = request, res = response, next ) => {
         console.log(err);
         return res.status(401).json({msn:'token no valido'})
     }
+}
 
 
+const comprobarJWT = async ( token = '' ) => {
 
+    try {
+        if( token.length < 10 ){
+            return null;
+        }
+
+        const { uid } = jwt.verify( token, process.env.PUBLICORPUBLICKEY );
+
+        const usuario  = await Usuario.findById( uid );
+        if( usuario ){
+            if( usuario.estado ){
+                return usuario;
+            }else{
+                return null;
+            }
+        }else{
+            return null;
+        }
+        
+    } catch (error) {
+        return null
+    }
 }
 
 
 module.exports = {
-    validarJWT
+    validarJWT,
+    comprobarJWT
 }
