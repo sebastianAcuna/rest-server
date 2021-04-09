@@ -35,6 +35,37 @@ const validarJWT = async () => {
     await conectarSocket();
 }
 
+
+btnSalir.addEventListener('click', async (ev) => {
+    ev.preventDefault();
+
+    socket.disconnect();
+    localStorage.removeItem('token');
+    await validarJWT();
+
+    
+});
+
+
+txtMensaje.addEventListener('keypress', (ev) => {
+
+    // console.log(ev);
+    if(ev.keyCode === 13){
+
+        const uuid = textUid.value;
+        const msg = ev.target.value;
+
+        if( uuid ){
+
+        }else{
+            socket.emit('mensaje-general', msg);
+        }
+
+        ev.target.value = "";
+    }
+});
+
+
 const conectarSocket = async () => {
 
     socket = io({
@@ -51,6 +82,50 @@ const conectarSocket = async () => {
     socket.on('disconnect', () => {
         console.log('Sockets offline');
     })
+
+    
+    socket.on('recibir-mensajes', dibujarMensajes );
+
+    socket.on('usuarios-activos', dibujarUsuarios );
+
+    socket.on('mensaje-privado', ()=> {
+
+    });
+    socket.on('mensaje-general', ()=> {
+
+    });
+
+}
+
+
+
+const dibujarMensajes = ( chat  = [] ) => {
+
+
+    let li  = ``;
+
+    chat.forEach( ( { nombre, uid, mensaje } ) => {
+        li += ` <li> 
+                    <h6 class="text-success"> ${ nombre } <small style="font-size:12px;" class="text-muted"> ( ${ uid } ) </small>  </h6>
+                    <span> ${mensaje} </span>  
+                    <hr>
+                </li>`;
+    });
+
+    ulMensajes.innerHTML = li;
+}
+
+
+const dibujarUsuarios  = ( usuarios = [] ) => {
+
+    let li  = ``;
+
+    usuarios.forEach( ( { nombre, uid } ) => {
+        li += `<li> <p>  <h5 class="text-success"> ${ nombre }  </h5>    <span class="fs-6 text-muted"> ${ uid }  </span> </p></li>`;
+        
+    });
+
+        ulUsuarios.innerHTML = li;
 
 }
 

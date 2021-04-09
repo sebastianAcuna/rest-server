@@ -1,7 +1,12 @@
 
+const { Socket } = require('socket.io');
 const { comprobarJWT } = require('../middlewares');
+const { ChatMensajes } = require('../models')
 
-const socketController = async (socket) => {
+const chatMensajes  = new ChatMensajes();
+
+const socketController = async (socket = new Socket(), io ) => {
+
 
     console.log('cliente conectado', socket.id);
 
@@ -11,7 +16,30 @@ const socketController = async (socket) => {
         return socket.disconnect();
     }
 
+
+    socket.on('disconnect', ( ) => {
+
+        chatMensajes.desconectarUsuario( usuario.id );
+        console.log(` Cliente ${ socket.id } offline `);
+        io.emit('usuarios-activos', chatMensajes.usuariosArr );
+    })
+
+
+    socket.on('mensaje-general', ( msg ) => {
+
+        chatMensajes.enviarMensaje( usuario.id, usuario.nombre, msg );
+
+        io.emit('recibir-mensajes', chatMensajes.ultimos10 );
+    });
+
+
     console.log(` se conecto ${usuario.nombre}`);
+
+
+    // agregar al usuario conectado
+    chatMensajes.conectarUsuario( usuario );
+
+    io.emit('usuarios-activos', chatMensajes.usuariosArr );
 
 }
 
