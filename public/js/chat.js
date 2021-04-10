@@ -50,17 +50,18 @@ btnSalir.addEventListener('click', async (ev) => {
 txtMensaje.addEventListener('keypress', (ev) => {
 
     // console.log(ev);
+
+    if(ev.target.value.length === 0){ return; }
     if(ev.keyCode === 13){
 
         const uuid = textUid.value;
         const msg = ev.target.value;
 
-        if( uuid ){
 
-        }else{
-            socket.emit('mensaje-general', msg);
-        }
-
+        const data = { msg, uuid }
+        
+        socket.emit('mensaje-general', data);
+    
         ev.target.value = "";
     }
 });
@@ -88,11 +89,8 @@ const conectarSocket = async () => {
 
     socket.on('usuarios-activos', dibujarUsuarios );
 
-    socket.on('mensaje-privado', ()=> {
-
-    });
-    socket.on('mensaje-general', ()=> {
-
+    socket.on('mensaje-privado', (payload) => {
+        console.log(payload)
     });
 
 }
